@@ -1,2 +1,23 @@
-- name: Build EXE from Python Script
-  uses: Nuitka/Nuitka-Action@v0.4
+jobs:
+  build:
+    # Only works on windows, unfortunately
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10+'
+          architecture: 'x64'
+
+      - name: Build executable
+        uses: Nuitka/Nuitka-Action@v0.4
+        with:
+          script-name: src/schedule_fixer.py
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: schedule_fixer
+          path: build/schedule_fixer.exe
