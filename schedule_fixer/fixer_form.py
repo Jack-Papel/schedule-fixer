@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog as fd
 from tkinter.messagebox import showinfo
-from schedule_fixer import fixer
+from schedule_fixer import fixer, fs_util
 
 
 class Form:
@@ -87,8 +87,7 @@ class Form:
         )
 
         if self.filename:
-            # FIXME there's no way this split works for every path and OS:
-            self.filepath_label.configure(text="Selected file path: " + self.filename.split("/")[-1])
+            self.filepath_label.configure(text="Selected file: " + fs_util.name_and_extension(self.filename))
         else:
             showinfo(
                 title="Invalid selection",
