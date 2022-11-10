@@ -1,3 +1,8 @@
+"""
+Defines the form for handling user input for fixing the calendar.
+
+:author Jack Papel
+"""
 import tkinter as tk
 from tkinter import filedialog as fd
 from tkinter.messagebox import showinfo
@@ -5,7 +10,14 @@ from schedule_fixer import fixer, fs_util
 
 
 class Form:
+    """
+    A form for the user to select an iCal file and fix it.
+    """
+
     def __init__(self):
+        """
+        Create the form.
+        """
         # Initialize form inputs
         self.filename = None
 
@@ -48,10 +60,20 @@ class Form:
             pady=5
         ).pack(expand=True, side=tk.BOTTOM)
 
-    def start(self):
+    def start(self) -> None:
+        """
+        Show the form
+        """
         self.root.mainloop()
 
-    def try_close_and_fix(self, filename: str, offset_hours: str, offset_days: str):
+    def try_close_and_fix(self, filename: str, offset_hours: str, offset_days: str) -> None:
+        """
+        Try to close the form and fix the file.
+        If not all the fields are filled out, show an error message, and don't close
+        :param filename: The name of the file to fix
+        :param offset_hours: The number of hours to offset the calendar by
+        :param offset_days: The number of days to offset the calendar by
+        """
         fail = False
         try:
             offset_hours = int(offset_hours)
@@ -66,7 +88,13 @@ class Form:
                 message="Please fill all fields!"
             )
 
-    def close_and_fix(self, filename: str, offset_hours, offset_days):
+    def close_and_fix(self, filename: str, offset_hours: int, offset_days: int) -> None:
+        """
+        Close the form and fix the file.
+        :param filename: The file to fix
+        :param offset_hours: The number of hours to offset the calendar by
+        :param offset_days: The number of days to offset the calendar by
+        """
         self.root.destroy()
         fixer.fix(filename, offset_days, offset_hours)
         showinfo(
@@ -74,7 +102,10 @@ class Form:
             message="The calendar has now been fixed!"
         )
 
-    def select_file(self):
+    def select_file(self) -> None:
+        """
+        Open the file picker, and handle the file selection.
+        """
         filetypes = (
             ('iCal files', '*.ics'),
             ('All files', '*.*')  # There are like, a million different iCal formats
