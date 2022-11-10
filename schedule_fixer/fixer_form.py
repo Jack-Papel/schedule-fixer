@@ -3,10 +3,15 @@ Defines the form for handling user input for fixing the calendar.
 
 :author Jack Papel
 """
+import ctypes
 import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog as fd
 from tkinter.messagebox import showinfo
 from schedule_fixer import fixer, fs_util
+
+# TODO: Verify this works on all systems
+ctypes.cdll.shcore.SetProcessDpiAwareness(1)
 
 
 class Form:
@@ -25,53 +30,56 @@ class Form:
         self.root = tk.Tk()
         self.root.title('Schedule Fixer')
         self.root.resizable(False, False)
-        self.root.geometry('400x200')
+        self.root.configure(padx=40, pady=0)
 
         # Create window elements
-        file_selector_frame = tk.Frame()
-        self.filepath_label = tk.Label(text="Select calendar path:")
-        open_button = tk.Button(
+        file_selector_frame = ttk.Frame(padding=10)
+        self.filepath_label = ttk.Label(text="Select calendar path:")
+        open_button = ttk.Button(
             self.root,
             text='Open',
             command=self.select_file,
-            padx=10
         )
 
-        offset_frame = tk.Frame()
+        # TODO: Clean up this mess
 
-        days_offset_label = tk.Label(text="How many days offset is the calendar? (+): early, (-): late")
-        days_offset_entry = tk.Entry()
+        offset_frame = ttk.Frame(padding=10)
 
-        hours_offset_label = tk.Label(text="How many hours offset is the calendar? (+): early, (-): late")
-        hours_offset_entry = tk.Entry()
+        days_offset_label = ttk.Label(text="How many days offset is the calendar? (+): early, (-): late")
+        days_offset_entry = ttk.Entry()
+
+        hours_offset_label = ttk.Label(text="How many hours offset is the calendar? (+): early, (-): late")
+        hours_offset_entry = ttk.Entry()
 
         self.set_manual_mode(False, days_offset_entry, hours_offset_entry, days_offset_label, hours_offset_label)
 
         manual = tk.IntVar()
-        manual_mode_checkbox = tk.Checkbutton(text="Insert offset manually",
-                                              variable=manual,
-                                              command=lambda: self.set_manual_mode(manual.get() == 1,
-                                                                                   days_offset_entry,
-                                                                                   hours_offset_entry,
-                                                                                   days_offset_label,
-                                                                                   hours_offset_label))
+        manual_mode_checkbox = ttk.Checkbutton(text="Insert offset manually",
+                                               variable=manual,
+                                               command=lambda: self.set_manual_mode(manual.get() == 1,
+                                                                                    days_offset_entry,
+                                                                                    hours_offset_entry,
+                                                                                    days_offset_label,
+                                                                                    hours_offset_label),
+                                               padding=10)
 
         file_selector_frame.pack(expand=True)
-        offset_frame.pack(expand=True)
+        offset_frame.pack(after=file_selector_frame, expand=True)
         self.filepath_label.pack(in_=file_selector_frame, side=tk.LEFT)
         open_button.pack(in_=file_selector_frame, side=tk.RIGHT)
-        manual_mode_checkbox.pack(in_=offset_frame, after=file_selector_frame, expand=True)
+        manual_mode_checkbox.pack(in_=offset_frame, expand=True)
         days_offset_label.pack(in_=offset_frame)
         days_offset_entry.pack(in_=offset_frame)
         hours_offset_label.pack(in_=offset_frame)
         hours_offset_entry.pack(in_=offset_frame)
-        tk.Button(
+        confirm_frame = ttk.Frame(padding=10)
+        ttk.Button(
             self.root,
             text='Fix!',
             command=lambda: self.try_close_and_fix(self.filename, hours_offset_entry.get(), days_offset_entry.get()),
-            padx=20,
-            pady=5
-        ).pack(expand=True, side=tk.BOTTOM)
+            padding=5
+        ).pack(in_=confirm_frame, expand=True)
+        confirm_frame.pack(after=offset_frame, expand=True, side=tk.BOTTOM)
 
     def start(self) -> None:
         """
