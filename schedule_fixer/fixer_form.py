@@ -33,7 +33,7 @@ class Form:
 
         # Create window elements
         file_selector_frame = ttk.Frame()
-        filepath_label = ttk.Label(text="Calendar:")
+        filepath_label = ttk.Label(text="Select a Calendar: *")
         self.filepath_entry = ttk.Entry(width=30, state=tk.DISABLED)
         open_button = ttk.Button(
             self.root,
@@ -41,49 +41,74 @@ class Form:
             command=self.select_file,
         )
 
-        # TODO: Clean up this mess
+        file_selector_frame.pack(fill=tk.X, pady=10, padx=10, expand=True)
+        filepath_label.pack(in_=file_selector_frame, side=tk.TOP, anchor=tk.NW)
+        self.filepath_entry.pack(in_=file_selector_frame, padx=5, side=tk.LEFT, fill=tk.X, expand=True)
+        open_button.pack(in_=file_selector_frame, side=tk.RIGHT)
 
-        offset_frame = ttk.Frame()
-
-        days_offset_label = ttk.Label(text="How many days offset is the calendar? (+): early, (-): late")
-        days_offset_entry = ttk.Entry()
-
-        hours_offset_label = ttk.Label(text="How many hours offset is the calendar? (+): early, (-): late")
-        hours_offset_entry = ttk.Entry()
-
-        self.set_manual_mode(False, days_offset_entry, hours_offset_entry, days_offset_label, hours_offset_label)
+        settings_frame = ttk.Frame()
+        settings_frame.pack(after=file_selector_frame, fill=tk.X, pady=10, padx=10, expand=True)
 
         manual = tk.IntVar()
-        manual_mode_checkbox = ttk.Checkbutton(text="Adjust dates manually",
+        manual_mode_checkbox = ttk.Checkbutton(text="Advanced",
                                                variable=manual,
                                                command=lambda: self.set_manual_mode(manual.get() == 1,
                                                                                     days_offset_entry,
                                                                                     hours_offset_entry,
                                                                                     days_offset_label,
                                                                                     hours_offset_label),
-                                               padding=10)
+                                               )
 
-        file_selector_frame.pack(fill=tk.X, pady=10, padx=10, expand=True)
-        offset_frame.pack(after=file_selector_frame, expand=True, padx=60)
-        filepath_label.pack(in_=file_selector_frame, side=tk.LEFT)
-        self.filepath_entry.pack(in_=file_selector_frame, padx=5, side=tk.LEFT, fill=tk.X, expand=True)
-        open_button.pack(in_=file_selector_frame, side=tk.RIGHT)
-        manual_mode_checkbox.pack(in_=offset_frame, expand=True)
-        days_offset_label.pack(in_=offset_frame)
-        days_offset_entry.pack(in_=offset_frame)
-        hours_offset_label.pack(in_=offset_frame)
-        hours_offset_entry.pack(in_=offset_frame)
-        confirm_frame = ttk.Frame(padding=10)
-        fixed_filepath_label = ttk.Label(text="Save to:")
+        manual_mode_checkbox.pack(in_=settings_frame, side=tk.TOP, anchor=tk.NW)
+
+        ttk.Separator(settings_frame, orient=tk.VERTICAL)\
+            .pack(in_=settings_frame, side=tk.LEFT, fill=tk.Y, padx=10)
+
+        advanced_settings_frame = ttk.Frame()
+        advanced_settings_frame.pack(in_=settings_frame, fill=tk.X, expand=True, side=tk.LEFT, anchor=tk.W)
+
+        offset_text = ttk.Label(text="Note: If the calendar is later than it is supposed to be,"
+                                     "\nyou can input a negative number.")
+        offset_text.pack(in_=advanced_settings_frame, anchor=tk.W, padx=5, pady=5)
+
+        days_frame = ttk.Frame()
+        days_offset_label = ttk.Label(text="How many days early is the calendar?")
+        days_offset_entry = ttk.Entry(width=5)
+
+        days_frame.pack(in_=advanced_settings_frame, anchor=tk.W, fill=tk.X, expand=True)
+        days_offset_label.pack(in_=days_frame, anchor=tk.W, padx=5, side=tk.LEFT)
+        days_offset_entry.pack(in_=days_frame, anchor=tk.E, padx=5, side=tk.RIGHT)
+
+        hours_frame = ttk.Frame()
+        hours_offset_label = ttk.Label(text="How many hours early is the calendar?")
+        hours_offset_entry = ttk.Entry(width=5)
+
+        hours_frame.pack(in_=advanced_settings_frame, anchor=tk.W, fill=tk.X, expand=True)
+        hours_offset_label.pack(in_=hours_frame, anchor=tk.W, padx=5, side=tk.LEFT)
+        hours_offset_entry.pack(in_=hours_frame, anchor=tk.E, padx=5, side=tk.RIGHT)
+
+        fixed_filepath_label = ttk.Label(text="Custom save location:")
         self.fixed_filepath_entry = ttk.Entry()
-        fixed_filepath_label.pack(in_=confirm_frame, side=tk.LEFT)
-        self.fixed_filepath_entry.pack(in_=confirm_frame, padx=5, side=tk.LEFT, fill=tk.X, expand=True)
+        fixed_filepath_label.pack(in_=advanced_settings_frame, padx=5, anchor=tk.W)
+        self.fixed_filepath_entry.pack(in_=advanced_settings_frame, side=tk.LEFT, padx=5, fill=tk.X, expand=True)
         ttk.Button(
-            self.root,
-            text='Fix',
+            text="Select",
+            command=lambda: self.fixed_filepath_entry.insert(0, fd.askdirectory(
+                initialdir="~/Downloads",
+                mustexist=True
+            ))
+        ).pack(in_=advanced_settings_frame, side=tk.RIGHT)
+
+        ttk.Button(
+            text='Cancel',
+            command=self.root.destroy,
+        ).pack(side=tk.RIGHT, anchor=tk.SE, padx=10, pady=10)
+        ttk.Button(
+            text='Fix!',
             command=lambda: self.try_close_and_fix(self.filename, hours_offset_entry.get(), days_offset_entry.get()),
-        ).pack(in_=confirm_frame, after=self.fixed_filepath_entry, side=tk.RIGHT)
-        confirm_frame.pack(after=offset_frame, fill=tk.X, expand=True)
+        ).pack(side=tk.RIGHT, anchor=tk.SE, pady=10)
+
+        self.set_manual_mode(False, days_offset_entry, hours_offset_entry, days_offset_label, hours_offset_label)
 
     def start(self) -> None:
         """
