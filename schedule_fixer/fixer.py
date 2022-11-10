@@ -13,7 +13,7 @@ from schedule_fixer import fs_util
 
 def fix(filepath, days_offset, hours_offset):
     # Consider allowing specifying the copy path?
-    with open(filepath) as f, open(fs_util.copy_path(filepath), "w") as fcopy:
+    with open(filepath) as f, open(fs_util.fixed_path(filepath), "w") as fcopy:
         for line in f:
             if "DTSTAMP" in line:
                 line = line[:8] + _fix_date_and_time(line[8:-1], days_offset, hours_offset) + "Z\n"
