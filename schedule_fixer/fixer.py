@@ -75,7 +75,7 @@ def _ical_date_from_datetime(t: datetime) -> str:
     return f"{t.year:04}{t.month:02}{t.day:02}"
 
 
-def _fix_date(date_str: str, days_offset) -> str:
+def _fix_date(date_str: str, days_offset: int) -> str:
     """
     Fix the date in the given iCal date string, by offsetting it by the given number of days.
     :param date_str: The iCal date string to fix
@@ -87,7 +87,7 @@ def _fix_date(date_str: str, days_offset) -> str:
     return _ical_date_from_datetime(class_time)
 
 
-def _fix_date_and_time(time_str: str, days_offset, hours_offset) -> str:
+def _fix_date_and_time(time_str: str, days_offset: int, hours_offset: int) -> str:
     """
     Fix the date and time in the given iCal date & time string, by offsetting it by the given number of days and hours.
     :param time_str: The iCal date & time string to fix
