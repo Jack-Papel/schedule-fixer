@@ -39,18 +39,31 @@ class Form:
 
         offset_frame = tk.Frame()
 
+        days_offset_label = tk.Label(text="How many days offset is the calendar? (+): early, (-): late")
         days_offset_entry = tk.Entry()
+
+        hours_offset_label = tk.Label(text="How many hours offset is the calendar? (+): early, (-): late")
         hours_offset_entry = tk.Entry()
+
+        self.set_manual_mode(False, days_offset_entry, hours_offset_entry, days_offset_label, hours_offset_label)
+
+        manual = tk.IntVar()
+        manual_mode_checkbox = tk.Checkbutton(text="Insert offset manually",
+                                              variable=manual,
+                                              command=lambda: self.set_manual_mode(manual.get() == 1,
+                                                                                   days_offset_entry,
+                                                                                   hours_offset_entry,
+                                                                                   days_offset_label,
+                                                                                   hours_offset_label))
 
         file_selector_frame.pack(expand=True)
         offset_frame.pack(expand=True)
         self.filepath_label.pack(in_=file_selector_frame, side=tk.LEFT)
         open_button.pack(in_=file_selector_frame, side=tk.RIGHT)
-        tk.Label(text="How many days offset is the calendar? (+): early, (-): late")\
-            .pack(in_=offset_frame, after=file_selector_frame)
+        manual_mode_checkbox.pack(in_=offset_frame, after=file_selector_frame, expand=True)
+        days_offset_label.pack(in_=offset_frame)
         days_offset_entry.pack(in_=offset_frame)
-        tk.Label(text="How many hours offset is the calendar? (+): early, (-): late")\
-            .pack(in_=offset_frame)
+        hours_offset_label.pack(in_=offset_frame)
         hours_offset_entry.pack(in_=offset_frame)
         tk.Button(
             self.root,
@@ -65,6 +78,34 @@ class Form:
         Show the form
         """
         self.root.mainloop()
+
+    def set_manual_mode(self, manual: bool, days_offset_entry: tk.Entry, hours_offset_entry: tk.Entry, *widgets) -> None:
+        """
+        Toggle the manual mode of the form.
+        :param manual: Whether the form should be in manual mode
+        :param days_offset_entry: The entry for the days offset
+        :param hours_offset_entry: The entry for the hours offset
+        :param widgets: The other widgets to toggle
+        """
+        if not manual:
+            days_offset_entry.delete(0, tk.END)
+            hours_offset_entry.delete(0, tk.END)
+            days_offset_entry.insert(0, '10')
+            hours_offset_entry.insert(0, '0')
+        self.disable_widgets(manual, days_offset_entry, hours_offset_entry, *widgets)
+
+    # noinspection PyArgumentList
+    def disable_widgets(self, manual: bool, *widgets: tk.Widget) -> None:
+        """
+        Toggle the disabled state of the given widgets.
+        :param manual: Whether the widgets should be disabled
+        :param widgets: The widgets to toggle
+        """
+        for widget in widgets:
+            if manual:
+                widget.configure(state=tk.NORMAL)
+            else:
+                widget.configure(state=tk.DISABLED)
 
     def try_close_and_fix(self, filename: str, offset_hours: str, offset_days: str) -> None:
         """
