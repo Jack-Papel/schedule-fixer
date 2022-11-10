@@ -30,20 +30,20 @@ class Form:
         self.root = tk.Tk()
         self.root.title('Schedule Fixer')
         self.root.resizable(False, False)
-        self.root.configure(padx=40, pady=0)
 
         # Create window elements
-        file_selector_frame = ttk.Frame(padding=10)
-        self.filepath_label = ttk.Label(text="Select calendar path:")
+        file_selector_frame = ttk.Frame()
+        filepath_label = ttk.Label(text="Calendar:")
+        self.filepath_entry = ttk.Entry(width=30, state=tk.DISABLED)
         open_button = ttk.Button(
             self.root,
-            text='Open',
+            text='Select',
             command=self.select_file,
         )
 
         # TODO: Clean up this mess
 
-        offset_frame = ttk.Frame(padding=10)
+        offset_frame = ttk.Frame()
 
         days_offset_label = ttk.Label(text="How many days offset is the calendar? (+): early, (-): late")
         days_offset_entry = ttk.Entry()
@@ -54,7 +54,7 @@ class Form:
         self.set_manual_mode(False, days_offset_entry, hours_offset_entry, days_offset_label, hours_offset_label)
 
         manual = tk.IntVar()
-        manual_mode_checkbox = ttk.Checkbutton(text="Insert offset manually",
+        manual_mode_checkbox = ttk.Checkbutton(text="Adjust dates manually",
                                                variable=manual,
                                                command=lambda: self.set_manual_mode(manual.get() == 1,
                                                                                     days_offset_entry,
@@ -63,9 +63,10 @@ class Form:
                                                                                     hours_offset_label),
                                                padding=10)
 
-        file_selector_frame.pack(expand=True)
-        offset_frame.pack(after=file_selector_frame, expand=True)
-        self.filepath_label.pack(in_=file_selector_frame, side=tk.LEFT)
+        file_selector_frame.pack(fill=tk.X, pady=10, padx=10, expand=True)
+        offset_frame.pack(after=file_selector_frame, expand=True, padx=60)
+        filepath_label.pack(in_=file_selector_frame, side=tk.LEFT)
+        self.filepath_entry.pack(in_=file_selector_frame, padx=5, side=tk.LEFT, fill=tk.X, expand=True)
         open_button.pack(in_=file_selector_frame, side=tk.RIGHT)
         manual_mode_checkbox.pack(in_=offset_frame, expand=True)
         days_offset_label.pack(in_=offset_frame)
@@ -73,13 +74,16 @@ class Form:
         hours_offset_label.pack(in_=offset_frame)
         hours_offset_entry.pack(in_=offset_frame)
         confirm_frame = ttk.Frame(padding=10)
+        fixed_filepath_label = ttk.Label(text="Save to:")
+        self.fixed_filepath_entry = ttk.Entry()
+        fixed_filepath_label.pack(in_=confirm_frame, side=tk.LEFT)
+        self.fixed_filepath_entry.pack(in_=confirm_frame, padx=5, side=tk.LEFT, fill=tk.X, expand=True)
         ttk.Button(
             self.root,
-            text='Fix!',
+            text='Fix',
             command=lambda: self.try_close_and_fix(self.filename, hours_offset_entry.get(), days_offset_entry.get()),
-            padding=5
-        ).pack(in_=confirm_frame, expand=True)
-        confirm_frame.pack(after=offset_frame, expand=True, side=tk.BOTTOM)
+        ).pack(in_=confirm_frame, after=self.fixed_filepath_entry, side=tk.RIGHT)
+        confirm_frame.pack(after=offset_frame, fill=tk.X, expand=True)
 
     def start(self) -> None:
         """
@@ -167,7 +171,12 @@ class Form:
         )
 
         if self.filename:
-            self.filepath_label.configure(text="Selected file: " + fs_util.name_and_extension(self.filename))
+            self.filepath_entry.configure(state=tk.NORMAL)
+            self.filepath_entry.delete(0, tk.END)
+            self.filepath_entry.insert(0, self.filename)
+            self.filepath_entry.configure(state=tk.DISABLED)
+            self.fixed_filepath_entry.delete(0, tk.END)
+            self.fixed_filepath_entry.insert(0, fs_util.fixed_path(self.filename))
         else:
             showinfo(
                 title="Invalid selection",
