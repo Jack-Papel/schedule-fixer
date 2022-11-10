@@ -4,7 +4,7 @@ A utility class defining useful functions for working with files.
 
 :author Jack Papel
 """
-from os import path
+from os import path  # TODO switch to pathlib.Path, maybe
 
 
 # TODO Verify this works on all systems
