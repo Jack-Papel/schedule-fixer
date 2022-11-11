@@ -23,8 +23,8 @@ class SettingsPane:
         self._parent = parent
         self._root = root
 
-        self._offset_text = ttk.Label(text="Note: If the calendar is later than it is supposed to be,"
-                                      "\nyou can input a negative number.")
+        self._offset_text = ttk.Label(text="Note: If the calendar is later than it is supposed "
+                                           "\nto be, you can input a negative number.")
 
         self._days_frame = ttk.Frame()
         self._days_offset_label = ttk.Label(text="How many days early is the calendar?")
@@ -57,7 +57,7 @@ class SettingsPane:
         self._days_offset_label.pack(in_=self._days_frame, anchor=tk.W, padx=5, side=tk.LEFT)
         self._days_offset_entry.pack(in_=self._days_frame, anchor=tk.E, padx=5, side=tk.RIGHT)
 
-        self._hours_frame.pack(in_=self._root, anchor=tk.W, fill=tk.X, expand=True)
+        self._hours_frame.pack(in_=self._root, pady=(0, 10), anchor=tk.W, fill=tk.X, expand=True)
         self._hours_offset_label.pack(in_=self._hours_frame, anchor=tk.W, padx=5, side=tk.LEFT)
         self._hours_offset_entry.pack(in_=self._hours_frame, anchor=tk.E, padx=5, side=tk.RIGHT)
 

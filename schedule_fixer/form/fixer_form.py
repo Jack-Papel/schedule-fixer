@@ -45,7 +45,7 @@ class FixerForm:
         open_button.pack(in_=file_selector_frame, side=tk.RIGHT)
 
         settings_frame = ttk.Frame()
-        settings_frame.pack(after=file_selector_frame, fill=tk.X, pady=10, padx=10, expand=True)
+        settings_frame.pack(after=file_selector_frame, fill=tk.X, pady=20, padx=10, expand=True)
 
         advanced = tk.BooleanVar()
         advanced_mode_checkbox = ttk.Checkbutton(
