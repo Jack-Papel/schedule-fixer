@@ -8,14 +8,26 @@ from os import path  # TODO switch to pathlib.Path, maybe
 
 
 # TODO Verify this works on all systems
-def fixed_path(filepath: str) -> str:
+def fixed_path(save_dir: str, original_filepath: str) -> str:
     """
     Get the path of the fixed file.
-    :param filepath: The path of the original file
+    :param save_dir: The directory to save the file in
+    :param original_filepath: The path of the original file
     :return: The new path of the fixed file
     """
-    return path.join(path.dirname(filepath), path.splitext(path.basename(filepath))[0] +
-                     "_fixed" + path.splitext(filepath)[1])
+    if save_dir is None:
+        return path.splitext(original_filepath)[0] + '_fixed' + path.splitext(original_filepath)[1]
+    return path.join(save_dir, path.splitext(path.basename(original_filepath))[0] +
+                     "_fixed" + path.splitext(original_filepath)[1])
+
+
+def get_dir(filepath: str) -> str:
+    """
+    Get the directory of the given file.
+    :param filepath: The path to the file
+    :return: The directory of the file
+    """
+    return path.dirname(filepath)
 
 
 def name_and_extension(filepath: str) -> str:

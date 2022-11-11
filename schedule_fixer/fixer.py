@@ -4,7 +4,6 @@ The file that actually handles fixing a given iCal file.
 :author Jack Papel
 """
 from datetime import datetime, timedelta
-from schedule_fixer import fs_util
 
 
 # See https://en.wikipedia.org/wiki/ICalendar
@@ -16,15 +15,15 @@ from schedule_fixer import fs_util
 # DTEND;TZID=America/New_York:20220902T115000
 # RRULE:FREQ=WEEKLY;UNTIL=20221209
 
-def fix(filepath: str, days_offset: int, hours_offset: int) -> None:
+def fix(filepath: str, save_dir: str, days_offset: int, hours_offset: int) -> None:
     """
     Fix the given iCal file.
     :param filepath: The full path to the iCal file
+    :param save_dir: The directory to save the fixed file to
     :param days_offset: The number of days to offset the calendar by
     :param hours_offset: The number of hours to offset the calendar by
     """
-    # Consider allowing specifying the fixed path?
-    with open(filepath) as f, open(fs_util.fixed_path(filepath), "w") as f_fixed:
+    with open(filepath) as f, open(save_dir, "w") as f_fixed:
         for line in f:
             if "DTSTAMP" in line:
                 line = line[:8] + _fix_date_and_time(line[8:-1], days_offset, hours_offset) + "Z\n"
