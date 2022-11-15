@@ -78,7 +78,7 @@ class SettingsPane:
         if not enabled:
             self._days_offset_entry.delete(0, tk.END)
             self._hours_offset_entry.delete(0, tk.END)
-            self._days_offset_entry.insert(0, '10')
+            self._days_offset_entry.insert(0, '1')
             self._hours_offset_entry.insert(0, '0')
             self._save_entry.delete(0, tk.END)
             if self._parent.get_filepath():
